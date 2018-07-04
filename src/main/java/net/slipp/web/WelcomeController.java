@@ -2,15 +2,16 @@ package net.slipp.web;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class WelcomeController {
-	@PostMapping("/helloworld")
-	public String welcome(String name, int age, Model model) {
-		System.out.println("name : " + name + " age : " + age);
-		model.addAttribute("name", name);
-		model.addAttribute("age", age);
-		return "welcome";
+	@GetMapping("/helloworld")
+	public String welcome(Model model) {
+		model.addAttribute("name", "timulys");
+		model.addAttribute("value", 123);
+		model.addAttribute("taxed_value", 30);
+		model.addAttribute("in_ca", true);
+		return "welcome"; 
 	}
 }
