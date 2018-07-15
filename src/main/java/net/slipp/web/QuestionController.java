@@ -51,55 +51,50 @@ public class QuestionController {
 	
 	@GetMapping("/{id}/form")
 	public String updateForm(@PathVariable Long id, Model model, HttpSession session) {
-		try {
-			Question question = questionRepository.findById(id).get();
-			hasPermission(question, session);
-			model.addAttribute("question", question);
-			return "/qna/updateForm";
-		} catch (Exception e) {
-			model.addAttribute("errorMessage", e.getMessage());
+		Question question = questionRepository.findById(id).get();
+		Result result = valid(question, session);
+		if (!result.isValid()) {
+			model.addAttribute("errorMessage", result.getErrorMessage());
 			return "/user/login";
 		}
+		model.addAttribute("question", question);
+		return "/qna/updateForm";
 	}
 	
 	@PutMapping("/{id}")
 	public String update(@PathVariable Long id, String title, String contents, HttpSession session, Model model) {
-		try {
-			Question question = questionRepository.findById(id).get();
-			hasPermission(question, session);
-			question.update(title, contents);
-			questionRepository.save(question);
-			
-			return String.format("redirect:/questions/%d", id);
-		} catch (Exception e) {
-			model.addAttribute("errorMessage", e.getMessage());
+		Question question = questionRepository.findById(id).get();
+		Result result = valid(question, session);
+		if (!result.isValid()) {
+			model.addAttribute("errorMessage", result.getErrorMessage());
 			return "/user/login";
 		}
+		question.update(title, contents);
+		questionRepository.save(question);
+		
+		return String.format("redirect:/questions/%d", id);
 	}
 	
 	@DeleteMapping("/{id}")
 	public String delete(@PathVariable Long id, Model model, HttpSession session) {
-		try {
-			Question question = questionRepository.findById(id).get();
-			hasPermission(question, session);
-			questionRepository.deleteById(id);
-			return "redirect:/";
-		} catch (Exception e) {
-			model.addAttribute("errorMessage", e.getMessage());
+		Question question = questionRepository.findById(id).get();
+		Result result = valid(question, session);
+		if (!result.isValid()) {
+			model.addAttribute("errorMessage", result.getErrorMessage());
 			return "/user/login";
 		}
+		questionRepository.deleteById(id);
+		return "redirect:/";
 	}
-
-	private boolean hasPermission(Question question, HttpSession session) {
+	
+	private Result valid(Question question, HttpSession session) {
 		if (!HttpSessionUtils.isLoginUser(session)) {
-			throw new IllegalStateException("로그인이 필요합니다.");
+			return Result.fail("로그인이 필요합니다.");
 		}
 		User loginUser = HttpSessionUtils.getUserFromSession(session);
 		if (!question.isSameWriter(loginUser)) {
-			throw new IllegalStateException("자신이 쓴 글만 수정, 삭제가 가능합니다.");
+			return Result.fail("자신이 쓴 글만 수정, 삭제가 가능합니다.");
 		}
-		
-		return true;
+		return Result.ok();
 	}
-	
 }
