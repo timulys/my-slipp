@@ -1,2 +1,2 @@
-INSERT INTO USER (USER_ID, PASSWORD, NAME, EMAIL) VALUES ('timulys', '1234', '최종현', 'timulys@gmail.com');
-INSERT INTO USER (USER_ID, PASSWORD, NAME, EMAIL) VALUES ('ounggil90', '1234', '최종현', 'ounggil90@nate.com');
+INSERT INTO USER (ID, USER_ID, PASSWORD, NAME, EMAIL, CREATE_DATE_TIME) VALUES ('1', 'timulys', '1234', '최종현', 'timulys@gmail.com', CURRENT_TIMESTAMP());
+INSERT INTO USER (ID, USER_ID, PASSWORD, NAME, EMAIL, CREATE_DATE_TIME) VALUES ('2', 'ounggil90', '1234', '최종현', 'ounggil90@nate.com', CURRENT_TIMESTAMP());
